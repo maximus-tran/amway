@@ -1,0 +1,20 @@
+{
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "jsxSingleQuote": false,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ],
+  "quoteProps": "consistent",
+  "semi": true,
+  "singleQuote": false,
+  "printWidth": 100,
+  "tabWidth": 4,
+  "trailingComma": "all"
+}
