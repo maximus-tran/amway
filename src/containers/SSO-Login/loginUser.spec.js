@@ -1,5 +1,6 @@
-import { By, until, Select } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
 import { buildDriver } from "../../common/browserBuild.js";
+import assert from "assert";
 
 describe("SSO Login", () => {
     let driver;
@@ -17,15 +18,17 @@ describe("SSO Login", () => {
         await driver.wait(until.elementLocated(By.className("input-eye-icon")), 600).click();
         await driver.findElement(By.css(".btn.btn-block.baseButton.btn-primary.activated")).click();
         await driver.wait(until.elementLocated(By.id("mainContent")), 20000);
+        assert.ok(await driver.getTitle(), "Dashboard", "Login Error!");
     });
 
     it("Login by ABO or Customer", async () => {
         await driver
-            .wait(until.elementLocated(By.className("profileIcon_container__Pd3Ql")), 20000)
+            .wait(until.elementLocated(By.className("profileIcon_container__Pd3Ql")), 30000)
             .click();
         //Sign out
         await driver.findElement(By.xpath('//div[@id="profileModal"]/div[2]/a[2]')).click();
-        await driver.navigate().to("https://account-amerreg-qa2.amwayglobal.com/en-us/?jansKey=b0ccfa7d-7e9d-4862-aec1-050f2deef3e4&exp_at=1735023976");
+        await driver.sleep(1000);
+        await driver.navigate().to("https://www.qa.ana.academy-preprod.amway.com/login");
         //Login in
         await driver.wait(until.elementLocated(By.css(".position-2-label")), 30000).click();
         await driver
@@ -35,6 +38,8 @@ describe("SSO Login", () => {
         await driver.wait(until.elementLocated(By.className("input-eye-icon")), 800).click();
         await driver.findElement(By.css(".btn.btn-block.baseButton.btn-primary.activated")).click();
         await driver.wait(until.elementLocated(By.id("mainContent")), 20000);
+        let element = await driver.findElement(By.className("skipLink_skipLink__TFuAo"));
+        assert.ok(await element.getAttribute("href"), "https://www.qa.ana.academy-preprod.amway.com/dashboard?init=true#mainContent", "Login Error!");
     });
 
     // after(async () => await driver.quit());
