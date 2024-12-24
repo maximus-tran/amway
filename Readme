@@ -1,0 +1,21 @@
+1. Requires
+
+    - node version 20.11.1 is installed
+    - Chrome browser is installed
+
+2. Run test code
+
+- Install packages: run command "npm install"
+  packages are installed includes "selenium-webdriver", "mocha", "assert"
+
+- To run test a file
+  npx mocha src/containers/<folder-name>/<file-name>.spec.js --timeout <timeout-value>
+
+- To run test a folder
+  npx mocha src/containers/<folder-name>/\*.spec.js --timeout <timeout-value>
+
+- To run test all folders
+  npx mocha src/containers/\*_/_.spec.js --timeout <timeout-value>
+
+For example:
+npx mocha test/\*_/_.spec.js --timeout 100000
