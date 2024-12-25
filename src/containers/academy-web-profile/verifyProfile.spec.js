@@ -26,12 +26,16 @@ describe("KAN-6: Verify Profile", () => {
     await driver
       .wait(until.elementLocated(By.className("profileIcon_container__Pd3Ql")), timeOut)
       .click();
-    console.log("check username", await driver.findElement(By.className(" CourseHeader_topbtn__lNqjt")).getAttribute("innerHTML"))
 
     let profile = await driver.findElement(By.className(" CourseHeader_topbtn__lNqjt"))
     assert.strictEqual(await profile.getText(), user.username, "Username does not match");
     console.log("Username:", await profile.getText());
   });
+
+  it("Verify that the user profile image displays a generic image ", async () => {
+    const element = await driver.findElement(By.xpath('//img[@alt="profile icon"]')).isDisplayed();
+    assert.equal(element, true, "Avatar display error");
+  })
 
   it("ABO First name, Last Name at the top of profile modal", async () => {
     const element = await driver.findElement(By.css(".CourseHeader_content_child__LUX1f")).isDisplayed();
