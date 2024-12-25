@@ -101,13 +101,13 @@ describe("KAN-12: Verify Categories at the dashboard", () => {
     const categoriesTitle = await driver
       .findElement(By.className("SectionTitle_section_container__RTAyL"))
       .isDisplayed();
-    assert.equal(categoriesTitle, true, "The Categories section is not displayed");
+    assert.ok(categoriesTitle, "The Categories section is not displayed");
 
     await driver.wait(until.elementLocated(By.className("dashboardcategories_wrapper__5udRt")), timeOut);
     const categoriesContent = await driver
       .findElement(By.className("dashboardcategories_wrapper__5udRt"))
       .isDisplayed();
-    assert.equal(categoriesContent, true, "The Categories section is not displayed");
+    assert.ok(categoriesContent, "The Categories section is not displayed");
 
   });
 
