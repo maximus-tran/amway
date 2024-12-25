@@ -43,5 +43,5 @@ describe("KAN-6: Verify Profile", () => {
     assert.equal(element, true, "Location Error!");
   })
 
-  // after(async () => await driver.quit());
+  after(async () => await driver.quit());
 });
