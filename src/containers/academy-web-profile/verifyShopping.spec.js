@@ -22,15 +22,25 @@ describe("KAN-7: Verify Shopping Navigation", () => {
       .sendKeys(user.email);
     await driver.findElement(By.id("loginform:password")).sendKeys(user.password);
     await driver.findElement(By.id("loginform:loginButton")).click();
-
+    const originalWindow = await driver.getWindowHandle();
     await driver
       .wait(until.elementLocated(By.className("profileIcon_container__Pd3Ql")), timeOut)
       .click();
     await driver
-    .wait(until.elementLocated(By.xpath('//a[@aria-label="Pagina web Amway"]')), timeOut)
-    .click()
-    assert.ok(await driver.getTitle(), "Amway Italia | Inizia la tua esperienza con Amway", "The e-Commerce website is not open")
+      .wait(until.elementLocated(By.xpath('//a[@aria-label="Pagina web Amway"]')), timeOut)
+      .click()
+    const windows = await driver.getAllWindowHandles();
+    windows.forEach(async handle => {
+      if (handle !== originalWindow) {
+        await driver.switchTo().window(handle);
+      }
+    });
+    const cartIcon = await driver.findElement(By.css(".header__shopping_cart"));
+    await driver.wait(until.elementIsVisible(cartIcon), timeOut);
+    assert.ok(await cartIcon.isDisplayed(), "Cart icon is not displayed.");
+    const button = await driver.wait(until.elementLocated(By.className("button__button    button__full_width ")), timeOut)
+    assert.ok(await button.isDisplayed(), "Error")
   });
 
-  after(async () => await driver.quit());
+  // after(async () => await driver.quit());
 });

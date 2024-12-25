@@ -19,7 +19,7 @@ describe("KAN-1: SSO Login", () => {
         await driver.wait(until.elementLocated(By.className("fa-regular fa-eye-slash")), timeOut).click();
         await driver.findElement(By.id("loginform:loginButton")).click();
         await driver.wait(until.elementLocated(By.id("mainContent")), timeOut);
-        assert.ok(await driver.getTitle(), "Dashboard", "Login Error!");
+        assert.ok(await driver.getTitle() === "Dashboard", "Login Error!");
 
         const cookies = await driver.manage().getCookies();
         console.log("Cookies saved successfully!", cookies);
