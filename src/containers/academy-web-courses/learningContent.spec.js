@@ -2,7 +2,7 @@ import { By, until } from "selenium-webdriver";
 import { buildDriver } from "../../common/browserBuild.js";
 import { baseURL, timeOut } from "../../common/baseURL.js";
 import assert from "assert";
-import { scrollToCss, scrollToElement, scrollToXpath } from "../../common/scrollTo.js";
+import { scrollToCss, scrollToElement } from "../../common/scrollTo.js";
 
 const cookieData =  [
   {
@@ -124,5 +124,5 @@ describe("KAN-15: Verify that learning content is displayed & user group as per 
     assert.ok(await catalogue.isDisplayed(), "Learning Catalogue section display failed!");
   });
 
-  // after(async () => await driver.quit());
+  after(async () => await driver.quit());
 });
