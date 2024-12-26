@@ -109,14 +109,14 @@ describe("KAN-12: Verify Categories at the dashboard", () => {
     assert.ok(categoryItems.length === 10, "Incorrect number of categories");
     assert.ok((await categoryItems[0].findElement(By.css('img')).getAttribute('src')).includes('Earn_Money.jpg'), 'Not earn monney category')
     assert.ok((await categoryItems[1].findElement(By.css('img')).getAttribute('src')).includes('Lead_a_Team.jpg'), 'Not lead a team category')
-    assert.ok((await categoryItems[2].findElement(By.css('img')).getAttribute('src')).includes('Learn_the_Rules.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[3].findElement(By.css('img')).getAttribute('src')).includes('Sell_on_Social.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[4].findElement(By.css('img')).getAttribute('src')).includes('Sponsor_New_ABOs.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[5].findElement(By.css('img')).getAttribute('src')).includes('Health_and_Wellbeing_Solutions.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[6].findElement(By.css('img')).getAttribute('src')).includes('Nutrition.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[7].findElement(By.css('img')).getAttribute('src')).includes('Beauty_and_personal_Care.jpg'), 'Not earn monney category')
-    assert.ok((await categoryItems[8].findElement(By.css('img')).getAttribute('src')).includes('croppedImage.jpeg'), 'Not earn monney category')
-    assert.ok((await categoryItems[9].findElement(By.css('img')).getAttribute('src')).includes('Durables_and_Home_Care.jpg'), 'Not earn monney category')
+    assert.ok((await categoryItems[2].findElement(By.css('img')).getAttribute('src')).includes('Learn_the_Rules.jpg'), 'Not learn the rules category')
+    assert.ok((await categoryItems[3].findElement(By.css('img')).getAttribute('src')).includes('Sell_on_Social.jpg'), 'Not sell on social category')
+    assert.ok((await categoryItems[4].findElement(By.css('img')).getAttribute('src')).includes('Sponsor_New_ABOs.jpg'), 'Not sponsor new ABOs category')
+    assert.ok((await categoryItems[5].findElement(By.css('img')).getAttribute('src')).includes('Health_and_Wellbeing_Solutions.jpg'), 'Not health and webllbeing category')
+    assert.ok((await categoryItems[6].findElement(By.css('img')).getAttribute('src')).includes('Nutrition.jpg'), 'Not nutrition category')
+    assert.ok((await categoryItems[7].findElement(By.css('img')).getAttribute('src')).includes('Beauty_and_personal_Care.jpg'), 'Not beauty and personal care category')
+    assert.ok((await categoryItems[8].findElement(By.css('img')).getAttribute('src')).includes('croppedImage.jpeg'), 'Not croppedImage category')
+    assert.ok((await categoryItems[9].findElement(By.css('img')).getAttribute('src')).includes('Durables_and_Home_Care.jpg'), 'Not home category')
   });
 
   it("Display all the Categories in defined order below from left to right with max 4 cards at each row", async () => {
