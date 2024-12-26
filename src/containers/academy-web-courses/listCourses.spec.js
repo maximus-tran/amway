@@ -104,7 +104,7 @@ describe("KAN-16: Verify UI List courses", () => {
 
     for (let i = 0; i < checkList.length; i++) {
       const text = await checkList[i].findElement(By.className("pill_pill_wrapper__gIDX_ pill_new__dn82x"));
-      assert.ok(await text.isDisplayed(), "Error")
+      assert.ok(await text.isDisplayed(), "New tag is not displayed")
     }
   });
 
