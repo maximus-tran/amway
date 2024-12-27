@@ -2,7 +2,6 @@ import { By, until } from "selenium-webdriver";
 import { buildDriver } from "../../common/browserBuild.js";
 import { baseURL, timeOut } from "../../common/baseURL.js";
 import assert from "assert";
-import { scrollToCss } from "../../common/scrollTo.js";
 
 const cookieData = [
   {

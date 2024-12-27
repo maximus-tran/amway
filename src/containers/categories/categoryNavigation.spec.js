@@ -104,10 +104,10 @@ describe("KAN-13: Category Navigation", () => {
       const Title = await items.getText();
       await items.click();
       await driver.wait(until.urlIs(Url), timeOut);
-      assert.ok(Url === await driver.getCurrentUrl(), `Navigate to inccorect URL of  category`)
+      assert.ok(Url === await driver.getCurrentUrl(), `Navigate to incorrect URL of  category`)
       assert.ok(await driver.getTitle() === 'Search', `Navigate to incorrect search page - ${Title} category`)
       const filter = await driver.wait(until.elementLocated(By.className("searchPage_item__UQlod")), timeOut).getText();
-      assert.ok(Title === filter, `Incorect mactching ${Title} category in filter section`)
+      assert.ok(Title === filter, `Incorrect mactching ${Title} category in filter section`)
     });
   }
   after(async () => await driver.quit());
