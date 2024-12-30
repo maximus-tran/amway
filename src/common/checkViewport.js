@@ -1,3 +1,6 @@
+import { timeOut } from "./baseURL.js";
+import { By, until } from "selenium-webdriver";
+
 const checkIsElementInRect = (rect, windowSize) => {
     return (
         rect.top >= 0 &&
@@ -28,4 +31,14 @@ const checkIsElementInViewport = async (driver, element) => {
     }
 };
 
-export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport };
+const checkElementExists = async (driver, className) => {
+    try {
+        const isDisplayed = await driver
+            .wait(until.elementLocated(By.className(className)), timeOut)
+            .isDisplayed();
+        return isDisplayed;
+    } catch (error) {
+        return false;
+    }
+};
+export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists };
