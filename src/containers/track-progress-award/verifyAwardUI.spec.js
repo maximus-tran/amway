@@ -84,6 +84,8 @@ describe("KAN-21: Verify Award UI in course detail", () => {
             assert.ok(isLanguageMatching(titleAward, [selectedLangValue]), `Title Award (${titleAward}) not match to ${selectedLang}`);
             assert.ok(isLanguageMatching(descriptionAward, [selectedLangValue]), `Description Award (${descriptionAward}) not match to ${selectedLang}`);
           }
+          await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+          break;
         }
         else if (isDisplayedAward && !isDiplayedDropDown) {
           const img = await driver.wait(until.elementLocated(By.className("awardModal_image_wrapper__zoJSV")), timeOut);
@@ -104,5 +106,74 @@ describe("KAN-21: Verify Award UI in course detail", () => {
     }
   });
 
-  // after(async () => await driver.quit());
+  it("Verify start learning course", async () => {
+    if (await driver.findElement(By.className("startLaunchCourse_start_launch_course_container__qYr6q")).isDisplayed()) {
+      await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+    }
+    const listAll = await driver.findElements(By.css(".tabDetails_cardwrapper_children__9RdHs"));
+    const loopCount = listAll.length > 3 ? 3 : listAll.length;
+    for (let course = 0; course < loopCount; course++) {
+      const originalWindow = await driver.getWindowHandle();
+      await listAll[course].click();
+      const contentButton = await driver.wait(until.elementLocated(By.className("button_btn_text__rvpWC")), timeOut).getText();
+      const langArr = [
+        { label: "Continua" },
+        { label: "Inizio il corso" },
+        { label: "Continue" },
+        { label: "Start Course" },
+        { label: "继续" },
+        { label: "开始课程" },
+      ]
+      const buttonValue = langArr.find(x => x.label === contentButton);
+      if (buttonValue) {
+        const titleCourse = await driver.wait(until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")), timeOut).getText();
+        const descriptionCourse = await driver.wait(until.elementLocated(By.className("startLaunchCourse_courseDescription__7oyMU")), timeOut).getText();
+
+        await driver.wait(until.elementLocated(By.className("button_button_wrapper__XaMM9 button_rounded__7_4oM ")), timeOut).click();
+        const windows = await driver.getAllWindowHandles();
+        windows.forEach(async handle => {
+          if (handle !== originalWindow) {
+            await driver.switchTo().window(handle);
+          }
+        });
+        await driver.wait(until.titleIs("Adapt"), timeOut);
+        assert.ok(await driver.getTitle() === "Adapt", "Navigation to detail course failed");
+        const wait = await driver.wait(until.elementLocated(By.className("page__inner")), timeOut);
+        await driver.wait(until.elementIsVisible(wait), timeOut);
+        await driver.close();
+
+        await driver.switchTo().window(originalWindow);
+
+        await driver.sleep(8000);
+        await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
+
+        await driver.wait(until.elementLocated(By.id("tabpanel-in_progress")), timeOut);
+        const list = await driver.findElements(By.css(".tabDetails_cardwrapper_children__9RdHs"));
+
+        for (let i = 0; i < list.length; i++) {
+          await list[i].click();
+          const titleInProgress = await driver.wait(until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")), timeOut).getText();
+          if (titleCourse === titleInProgress) {
+            const progressBar = await list[i].findElement(By.className("card_progressbar_wrapper__36Fzy"));
+            assert.ok(await progressBar.isDisplayed(), "Progress Bar does not displayed")
+            const titlePopup = await driver
+              .wait(until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")), timeOut)
+              .getText();
+            const descriptionPopup = await driver
+              .wait(until.elementLocated(By.className("startLaunchCourse_courseDescription__7oyMU")), timeOut)
+              .getText();
+
+            assert.ok(titleCourse === titlePopup, `${titleCourse} and ${titlePopup} not match`);
+            assert.ok(descriptionCourse === descriptionPopup, `${descriptionCourse} and ${descriptionPopup} not match`);
+          }
+          await driver.wait(until.elementLocated(By.className("startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+          break;
+        }
+        break;
+      }
+      await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+    }
+  })
+
+  after(async () => await driver.quit());
 });
