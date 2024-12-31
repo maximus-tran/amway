@@ -31,7 +31,7 @@ describe("KAN-21: Verify Award UI in course detail", () => {
     const loopCount = list.length > 3 ? 3 : list.length;
 
     for (let item = 0; item < loopCount; item++) {
-      const awardIcon = await list[item].findElement(By.xpath(".//img[@alt='award icon']")).catch(() => null);
+      const awardIcon = await list[item].findElement(By.xpath("//img[@alt='award icon']")).isDisplayed().then(() => true).catch(() => false);
       if (awardIcon) {
         await list[item].click();
         const isDisplayedAward = await checkElementExists(driver, "awardModal_image_wrapper__zoJSV");
@@ -85,8 +85,7 @@ describe("KAN-21: Verify Award UI in course detail", () => {
             assert.ok(isLanguageMatching(descriptionAward, [selectedLangValue]), `Description Award (${descriptionAward}) not match to ${selectedLang}`);
           }
         }
-
-        if (isDisplayedAward && !isDiplayedDropDown) {
+        else if (isDisplayedAward && !isDiplayedDropDown) {
           const img = await driver.wait(until.elementLocated(By.className("awardModal_image_wrapper__zoJSV")), timeOut);
           const titleAward = await driver
             .wait(until.elementLocated(By.className("awardModal_awardtitle__7ethH")), timeOut)
@@ -99,10 +98,11 @@ describe("KAN-21: Verify Award UI in course detail", () => {
           assert.ok(isLanguageMatching(titleAward, primaryLanguage), `Title Award (${titleAward}) not match to English`);
           assert.ok(isLanguageMatching(descriptionAward, primaryLanguage), `Description Award (${descriptionAward}) not match to English`);
         }
+        await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+        break;
       }
-      await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
     }
   });
 
-  after(async () => await driver.quit());
+  // after(async () => await driver.quit());
 });

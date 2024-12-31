@@ -41,4 +41,5 @@ const checkElementExists = async (driver, className) => {
         return false;
     }
 };
-export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists };
+
+export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists, checkElementXpath };
