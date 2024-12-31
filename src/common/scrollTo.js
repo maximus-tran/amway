@@ -4,7 +4,7 @@ const scrollToCss = async (driver, css) => {
     await driver.executeScript("window.scrollTo(0, 0);");
     const scrollTo = await driver.findElement(By.css(css));
 
-    await driver.actions().scroll(0, 0, 0, 500, scrollTo).perform();
+    await driver.actions().scroll(0, 0, 0, 750, scrollTo).perform();
 };
 
 const scrollToXpath = async (driver, xpath) => {
