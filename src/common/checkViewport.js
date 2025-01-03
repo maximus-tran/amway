@@ -42,4 +42,15 @@ const checkElementExists = async (driver, className) => {
     }
 };
 
-export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists };
+const checkElementXpath = async (driver, xpath) => {
+    try {
+        const isDisplayed = await driver
+            .wait(until.elementLocated(By.xpath(xpath)), timeOut)
+            .isDisplayed();
+        return isDisplayed;
+    } catch (error) {
+        return false;
+    }
+};
+
+export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists, checkElementXpath };
