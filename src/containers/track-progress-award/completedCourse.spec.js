@@ -2,6 +2,7 @@ import { By, until } from "selenium-webdriver";
 import { buildDriver } from "../../common/browserBuild.js";
 import { baseURL, timeOut } from "../../common/baseURL.js";
 import assert from "assert";
+import { checkElementExists, checkElementXpath } from "../../common/checkViewport.js";
 
 describe("KAN-23: Verify award after finishing course", () => {
   let driver;
@@ -12,10 +13,15 @@ describe("KAN-23: Verify award after finishing course", () => {
 
   it("It should get an Award and the Achievements section on that course card should be clickable", async () => {
     await driver.get(`${baseURL}/dashboard?init=true`);
+    const user = {
+      email: "MPKF34IMTEJSU4SQJ6UCOC6FFZ4COPJOYWSEIIVMZXLKIWEU2BAQ@example.com",
+      password: "Amway@1234",
+      username: "GENE FLUECK",
+    }
     await driver
       .wait(until.elementLocated(By.id("loginform:loginid")), timeOut)
-      .sendKeys("MPKF34IMTEJSU4SQJ6UCOC6FFZ4COPJOYWSEIIVMZXLKIWEU2BAQ@example.com");
-    await driver.findElement(By.id("loginform:password")).sendKeys("Amway@1234");
+      .sendKeys(user.email);
+    await driver.findElement(By.id("loginform:password")).sendKeys(user.password);
     await driver.findElement(By.id("loginform:loginButton")).click();
 
     await driver.wait(until.elementLocated(By.css(".tab_wrapper__DEA_E")), timeOut);
@@ -24,18 +30,18 @@ describe("KAN-23: Verify award after finishing course", () => {
     await driver.wait(until.elementLocated(By.className("courseTabs_tabs_wrapper__LQBEa")), timeOut)
     assert.ok(await driver.getTitle() === "Courses", "Navigation to Courses Page failed");
 
-    // await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
-    await driver.wait(until.elementLocated(By.id("tabpanel-course_catalog")), timeOut);
+    await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
+    await driver.wait(until.elementLocated(By.id("tabpanel-in_progress")), timeOut);
 
     const listProgress = await driver.findElements(By.css(".tabDetails_cardwrapper_children__9RdHs"));
 
     for (let i = 0; i < listProgress.length; i++) {
       const awardIcon = await listProgress[i].findElement(By.xpath("//img[@alt='award icon']")).isDisplayed().then(() => true).catch(() => false);
-      const timeIcon = await driver.wait(until.elementLocated(By.xpath("//img[@alt='time icon']")), timeOut).isDisplayed();
-      const progressBar = await driver.wait(until.elementLocated(By.className("card_progressbar_wrapper__36Fzy")), timeOut).isDisplayed();
+      const timeIcon = await checkElementXpath(driver, "//img[@alt='time icon']");
+      const progressBar = await checkElementExists(driver, "card_progressbar_wrapper__36Fzy");
       if (awardIcon && timeIcon && progressBar) {
         const originalWindow = await driver.getWindowHandle();
-        await listProgress[2].click();
+        await listProgress[i].click();
         const titleCourse = await driver.wait(until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")), timeOut).getText();
         const button = await driver.wait(until.elementLocated(By.className("courseDurationModal_btn_container__NANdK")), timeOut);
         await button.click();
@@ -58,15 +64,21 @@ describe("KAN-23: Verify award after finishing course", () => {
           await driver.switchTo().frame(iframe[0]);
         }
 
-        const videoElement = await driver.findElement(By.xpath("//video[@id='video_html5_api']"));
-        const duration = await driver.executeScript("return arguments[0].duration;", videoElement);
-        const playVideo = await driver.wait(until.elementLocated(By.className("vjs-big-play-button")), timeOut);
-        await playVideo.click();
-        await driver.executeScript('arguments[0].currentTime;', videoElement);
-        await driver.sleep(Math.floor(duration * 1000));
+        const video = await checkElementXpath(driver, "//video[@id='video_html5_api']");
+        const img = await checkElementExists(driver, "component__image graphic__image");
+        if (video && !img) {
+          const videoElement = await driver.findElement(By.xpath("//video[@id='video_html5_api']"));
+          const duration = await driver.executeScript("return arguments[0].duration;", videoElement);
+          const playVideo = await driver.wait(until.elementLocated(By.className("vjs-big-play-button")), timeOut);
+          await playVideo.click();
+          await driver.executeScript('arguments[0].currentTime;', videoElement);
+          await driver.sleep(Math.floor(duration * 1000));
+        }
+        // else if (img && video) {
+        //   await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+        // }
 
         await driver.close();
-
         await driver.switchTo().window(originalWindow);
 
         await driver.sleep(8000);
@@ -106,14 +118,18 @@ describe("KAN-23: Verify award after finishing course", () => {
             await driver.wait(until.elementLocated(By.className("awardModal_awardContainer__xf2lG awardModal_awardCompleted__kM1Oh")), timeOut).click();
             await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_courseCompletionWithAwardContainer__LfrdE")), timeOut).isDisplayed();
             const titlePopup = await driver.findElement(By.className("courseCompletionWithAward_courseName__sn4EG")).getText();
+            const usernameXpath = `//div[@aria-label='abo name - ${user.username}']`;
+            const username = await driver.findElement(By.xpath(usernameXpath)).getText();
             assert.ok(await titleAward.getText() === titlePopup, `${titleAward} and ${titlePopup} not match`);
+            assert.ok(username === user.username, `${username} and ${user.username} not match`);
             await driver.findElement(By.className("icon courseCompletionWithAward_cross_icon__OBd0_")).click();
+            await driver.wait(until.elementLocated(By.className("startLaunchCourse_cross_icon__eyRob")), timeOut).click();
             break;
           }
           await driver.wait(until.elementLocated(By.className("startLaunchCourse_cross_icon__eyRob")), timeOut).click();
         }
         if (!courseCompleted) {
-          console.log("Not completed the course");
+          console.log("Course not completed");
           break;
         }
       }
