@@ -65,8 +65,7 @@ describe("KAN-23: Verify award after finishing course", () => {
         }
 
         const video = await checkElementXpath(driver, "//video[@id='video_html5_api']");
-        const img = await checkElementExists(driver, "component__image graphic__image");
-        if (video && !img) {
+        if (video) {
           const videoElement = await driver.findElement(By.xpath("//video[@id='video_html5_api']"));
           const duration = await driver.executeScript("return arguments[0].duration;", videoElement);
           const playVideo = await driver.wait(until.elementLocated(By.className("vjs-big-play-button")), timeOut);
@@ -74,16 +73,18 @@ describe("KAN-23: Verify award after finishing course", () => {
           await driver.executeScript('arguments[0].currentTime;', videoElement);
           await driver.sleep(Math.floor(duration * 1000));
         }
-        // else if (img && video) {
-        //   await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-        // }
 
         await driver.close();
         await driver.switchTo().window(originalWindow);
 
         await driver.sleep(8000);
+        //Course should be removed removed from In Progress tab
+        await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
+        const title = await driver.wait(until.elementLocated(By.className("card_name__HOcFA")), timeOut).getText();
+        assert.ok(titleCourse === !title, "The course is still present in the In Progress section");
+        
+        //Course should be displayed at "Complete" tab
         await driver.wait(until.elementLocated(By.id("tab-completed")), timeOut).click();
-
         await driver.wait(until.elementLocated(By.id("tabpanel-completed")), timeOut);
         const listCompleted = await driver.findElements(By.css(".tabDetails_cardwrapper_children__9RdHs"));
 
