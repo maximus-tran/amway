@@ -179,6 +179,19 @@ describe("Verify completed courses", () => {
             await driver.switchTo().window(originalWindow);
 
             await driver.sleep(8000);
+            //Course should be removed removed from In Progress tab
+            await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
+            await driver.wait(until.elementLocated(By.id("tabpanel-in_progress")), timeOut);
+            const title = await driver.findElements(By.className("card_name__HOcFA"));
+            const loopProgressCount = title.length;
+            for (let index = 0; index < loopProgressCount; index++) {
+                const courseTitle = await title[index].getText();
+                assert.ok(
+                    !(titlePopup === courseTitle),
+                    "The course is still present in the In Progress section",
+                );
+            }
+
             //Navigate to complete section
             await driver.wait(until.elementLocated(By.id("tab-completed")), timeOut).click();
             await driver.wait(until.elementLocated(By.id("tabpanel-completed")), timeOut);
