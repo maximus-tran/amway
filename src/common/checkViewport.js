@@ -1,6 +1,5 @@
-import { timeOut } from "./baseURL.js";
+import { timeOut } from "./constants.js";
 import { By, until } from "selenium-webdriver";
-
 const checkIsElementInRect = (rect, windowSize) => {
     return (
         rect.top >= 0 &&
@@ -31,10 +30,10 @@ const checkIsElementInViewport = async (driver, element) => {
     }
 };
 
-const checkElementExists = async (driver, className) => {
+const checkElementExists = async (driver, type, className) => {
     try {
         const isDisplayed = await driver
-            .wait(until.elementLocated(By.className(className)), timeOut)
+            .wait(until.elementLocated(By[type](className)), timeOut)
             .isDisplayed();
         return isDisplayed;
     } catch (error) {
@@ -42,15 +41,19 @@ const checkElementExists = async (driver, className) => {
     }
 };
 
-const checkElementXpath = async (driver, xpath) => {
+const checkChildElementExists = async (element, type, className) => {
     try {
-        const isDisplayed = await driver
-            .wait(until.elementLocated(By.xpath(xpath)), timeOut)
-            .isDisplayed();
-        return isDisplayed;
+        await element.findElement(By[type](className));
+        return true;
     } catch (error) {
         return false;
     }
 };
 
-export { checkIsElementInRect, checkIsElementInViewportXAxis, checkIsElementInViewport, checkElementExists, checkElementXpath };
+export {
+    checkIsElementInRect,
+    checkIsElementInViewportXAxis,
+    checkIsElementInViewport,
+    checkElementExists,
+    checkChildElementExists,
+};
