@@ -2,7 +2,7 @@ import { By, until } from "selenium-webdriver";
 import { buildDriver } from "../../common/browserBuild.js";
 import { baseURL, timeOut } from "../../common/baseURL.js";
 import assert from "assert";
-import { checkElementExists, checkElementXpath } from "../../common/checkViewport.js";
+import { checkElementExists } from "../../common/checkViewport.js";
 
 describe("KAN-23: Verify award after finishing course", () => {
   let driver;
@@ -47,18 +47,26 @@ describe("KAN-23: Verify award after finishing course", () => {
     const loopCount = listProgress.length > 3 ? 3 : listProgress.length;
 
     for (let i = 0; i < loopCount; i++) {
-      const awardIcon = await listProgress[1]
+      const awardIcon = await listProgress[i]
         .findElement(By.className("card_award__R_edO"))
         .isDisplayed()
         .then(() => true)
         .catch(() => false);
-      const timeIcon = await checkElementXpath(driver, "//img[@alt='time icon']");
-      const progressBar = await checkElementExists(driver, "card_progressbar_wrapper__36Fzy");
+      const timeIcon = await checkElementExists(
+        driver,
+        "xpath",
+        "//img[@alt='time icon']"
+      );
+      const progressBar = await checkElementExists(
+        driver,
+        "className",
+        "card_progressbar_wrapper__36Fzy"
+      )
 
       //Check course with award icon, time icon and progress bar
       if (awardIcon && timeIcon && progressBar) {
         const originalWindow = await driver.getWindowHandle();
-        await listProgress[1].click();
+        await listProgress[i].click();
         const titleCourse = await driver
           .wait(
             until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")),
@@ -155,23 +163,31 @@ describe("KAN-23: Verify award after finishing course", () => {
         let isHasCompletedCourse = false;
         for (let x = 0; x < listCompleted.length; x++) {
           const titleCompleted = await listCompleted[x].getText();
-          if (titleCourse === titleCompleted) {
+          const achievementIcon = await checkElementExists(
+            driver,
+            "css",
+            ".tabDetails_cardwrapper_children__9RdHs:nth-child(1) .card_bottom_area__miHVB img:nth-child(2)"
+          )
+          if ((titleCourse === titleCompleted) && achievementIcon) {
             isHasCompletedCourse = true;
             await listCompleted[x].click();
             //Check award card is displayed in pop up
             const isHasImg = await checkElementExists(
               driver,
+              "className",
               "awardModal_image_wrapper__zoJSV",
             );
             assert.ok(isHasImg, "Award image is not displayed");
             const isHasTitleAward = await checkElementExists(
               driver,
+              "className",
               "awardModal_awardtitle__7ethH",
             );
             assert.ok(isHasTitleAward, `Title award is not displayed`);
             const titleAward = await driver.wait(until.elementLocated(By.className("awardModal_awardtitle__7ethH")), timeOut).getText();
             const isHasDescriptionAward = await checkElementExists(
               driver,
+              "className",
               "awardModal_awardSmallDesc__tDF_M",
             );
             assert.ok(isHasDescriptionAward, `Description Award is not displayed`);
@@ -190,6 +206,7 @@ describe("KAN-23: Verify award after finishing course", () => {
 
             const isHasAwardPopup = await checkElementExists(
               driver,
+              "className",
               "courseCompletionWithAward_courseCompletionWithAwardContainer__LfrdE",
             );
             assert.ok(isHasAwardPopup, "Award popup is not displayed");
@@ -199,8 +216,7 @@ describe("KAN-23: Verify award after finishing course", () => {
                 By.className("courseCompletionWithAward_courseName__sn4EG"),
               )
               .getText();
-            assert.ok(
-              (await titleAward.getText()) === titlePopup,
+            assert.ok(titleAward === titlePopup,
               `${titleAward} and ${titlePopup} not match`,
             );
             const usernameXpath = `//div[@aria-label='abo name - ${user.username}']`;
