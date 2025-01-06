@@ -48,31 +48,23 @@ describe("KAN-23: Verify award after finishing course", () => {
 
         for (let i = 0; i < loopCount; i++) {
             const awardIcon = await listProgress[i]
-                .findElement(By.xpath("//img[@alt='award icon']"))
+                .findElement(By.className("card_award__R_edO"))
                 .isDisplayed()
                 .then(() => true)
                 .catch(() => false);
             const timeIcon = await checkElementXpath(driver, "//img[@alt='time icon']");
             const progressBar = await checkElementExists(driver, "card_progressbar_wrapper__36Fzy");
+
             //Check course with award icon, time icon and progress bar
             if (awardIcon && timeIcon && progressBar) {
                 const originalWindow = await driver.getWindowHandle();
-                await listProgress[2].click();
+                await listProgress[i].click();
                 const titleCourse = await driver
                     .wait(
                         until.elementLocated(By.className("startLaunchCourse_main_title__VMVRr")),
                         timeOut,
                     )
                     .getText();
-                console.log("====================================");
-                console.log(titleCourse);
-                console.log("====================================");
-                await driver
-                    .wait(
-                        until.elementLocated(By.className("startLaunchCourse_cross_icon__eyRob")),
-                        timeOut,
-                    )
-                    .click();
                 //Start course
                 const button = await driver.wait(
                     until.elementLocated(By.className("courseDurationModal_btn_container__NANdK")),
