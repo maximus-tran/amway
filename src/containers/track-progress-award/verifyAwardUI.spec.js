@@ -138,8 +138,8 @@ describe("KAN-21: Verify Award UI in course detail", () => {
         });
         await driver.wait(until.titleIs("Adapt"), timeOut);
         assert.ok(await driver.getTitle() === "Adapt", "Navigation to detail course failed");
-        const wait = await driver.wait(until.elementLocated(By.className("page__inner")), timeOut);
-        await driver.wait(until.elementIsVisible(wait), timeOut);
+        const lessonContent = await driver.wait(until.elementLocated(By.className("page__inner")), timeOut);
+        await driver.wait(until.elementIsVisible(lessonContent), timeOut);
         await driver.close();
 
         await driver.switchTo().window(originalWindow);
