@@ -39,9 +39,8 @@ describe("Verify Favourite course (with trophy icon)", () => {
 
     await driver.wait(until.elementLocated(By.id("tabpanel-course_catalog")), timeOut);
     const list = await driver.findElements(By.css(".tabDetails_cardwrapper_children__9RdHs"));
-    const loopCount = list.length > 3 ? 3 : list.length;
 
-    for (let item = 0; item < loopCount; item++) {
+    for (let item = 0; item < list.length; item++) {
       const awardIcon = await list[item].findElement(By.xpath("//img[@alt='award icon']")).isDisplayed().then(() => true).catch(() => false);
       if (awardIcon) {
         await list[item].click();
@@ -83,14 +82,24 @@ describe("Verify Favourite course (with trophy icon)", () => {
 
         //Favourite icon should be displayed as filled in white
         const favouriteButton = await driver.wait(until.elementLocated(By.className("SocialMediaShareButton_btnContainer__xBnuM")), timeOut);
-        const imgFav = (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("favorite.647593da.svg");
+        const isHasImgFav = await checkElementExists(
+          driver,
+          "xpath",
+          "//button[@aria-label='favourite icon']"
+        )
+        assert.ok(isHasImgFav, `Icon is not displayed`);
+
+        const imgFav = (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("favorite.647593da.svg");     
         if (imgFav) {
           assert.ok(imgFav, `Favourite icon should be displayed as filled in white`);
         }
 
         else if (!(imgFav)) {
+          const likeIcon = (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("likeIcon.b295a0fc.svg");
+          assert.ok(likeIcon,  `Like icon is not displayed`)
           await favouriteButton.click();
-          assert.ok(imgFav, `Favourite icon should be displayed as filled in white`);
+          const favIcon = (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("favorite.647593da.svg");
+          assert.ok(favIcon, `Favourite icon should be displayed as filled in white`);
         }
 
         break;
