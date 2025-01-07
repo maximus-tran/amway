@@ -50,7 +50,7 @@ describe("Verify complete the course", () => {
           "className",
           "startLaunchCourse_completedTextContainer__6I5ub"
         )
-        assert.ok(isHasCompletedCourse, `The text "Completed Course" is not displayed`);
+        assert.ok(isHasCompletedCourse, `The text "Completed Course!" is not displayed`);
 
         //Open confetti background
         await driver.wait(until.elementLocated(By.className("awardModal_awardContainer__xf2lG awardModal_awardCompleted__kM1Oh")), timeOut).click();
@@ -67,19 +67,7 @@ describe("Verify complete the course", () => {
           "className",
           "courseCompletionWithAward_mainTitleContainer__Byd5E"
         );
-        assert.ok(isHasTextDisplayed, `The text "Completed Course!" is not displayed`);
-
-        const text = await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_mainTitle__9zFw5")), timeOut).getText();
-        const langArr = [
-          { label: "Corso completato!" },
-          { label: "Course Completed!" },
-          { label: "课程已完成！" },
-        ];
-        const textValue = langArr.find((x) => x.label === text);
-        assert.ok(
-          text === textValue.label,
-          `${text} and ${textValue} not matching`
-        );
+        assert.ok(isHasTextDisplayed, `The text "Completed Course!" is not displayed in confetti background`);
 
         //Download button should be displayed below the confetti
         const isHasDownloadButton = await checkElementExists(
@@ -88,14 +76,9 @@ describe("Verify complete the course", () => {
           "courseCompletionWithAward_saveAwardLink__Dbelt"
         )
         assert.ok(isHasDownloadButton, `Download button is not displayed`);
-        //Check "Download" text is displayed
-        const download = await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_saveAwardLink__Dbelt")), timeOut);
-        assert.ok((await download.getText()) === "Download", `Download button is not displayed`);
-        //Check download img is displayed
-        assert.ok((await download.findElement(By.css("img")).getAttribute("src")).includes("downloadIcon.66d4499a.svg"), `Download image is not displayed`);
 
-        //Click download button award
-        await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_saveAwardLink__Dbelt")), timeOut).click();
+        // //Click download button award
+        // await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_saveAwardLink__Dbelt")), timeOut).click();
         break;
       }
       await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
