@@ -94,6 +94,8 @@ describe("Verify complete the course", () => {
         //Check download img is displayed
         assert.ok((await download.findElement(By.css("img")).getAttribute("src")).includes("downloadIcon.66d4499a.svg"), `Download image is not displayed`);
 
+        //Click download button award
+        await driver.wait(until.elementLocated(By.className("courseCompletionWithAward_saveAwardLink__Dbelt")), timeOut).click();
         break;
       }
       await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
