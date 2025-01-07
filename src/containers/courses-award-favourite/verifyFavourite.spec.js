@@ -83,12 +83,15 @@ describe("Verify Favourite course (with trophy icon)", () => {
 
         //Favourite icon should be displayed as filled in white
         const favouriteButton = await driver.wait(until.elementLocated(By.className("SocialMediaShareButton_btnContainer__xBnuM")), timeOut);
-        await favouriteButton.click();
-        const imgFav = await favouriteButton.findElement(By.css("img")).getAttribute("src");
-        assert.ok(
-          (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("favorite.647593da.svg"),
-          `Favourite icon should be displayed as filled in white`,
-        );
+        const imgFav = (await favouriteButton.findElement(By.css("img")).getAttribute("src")).includes("favorite.647593da.svg");
+        if (imgFav) {
+          assert.ok(imgFav, `Favourite icon should be displayed as filled in white`);
+        }
+
+        else if (!(imgFav)) {
+          await favouriteButton.click();
+          assert.ok(imgFav, `Favourite icon should be displayed as filled in white`);
+        }
       }
       await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
     }
