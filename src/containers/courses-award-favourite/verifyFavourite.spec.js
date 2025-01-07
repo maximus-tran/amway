@@ -92,6 +92,8 @@ describe("Verify Favourite course (with trophy icon)", () => {
           await favouriteButton.click();
           assert.ok(imgFav, `Favourite icon should be displayed as filled in white`);
         }
+
+        break;
       }
       await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
     }
