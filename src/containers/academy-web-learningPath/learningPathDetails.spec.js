@@ -84,12 +84,42 @@ describe("Verify learning path detail", () => {
             .wait(until.elementLocated(By.className("learningpathdetails_description__1Ecmp")), timeOut)
             .getText();
           assert.ok(isLanguageMatching(mainDescription, [selectedLangValue]), `Description (${mainDescription}) not match to ${selectedLang}`);
+          if (await driver.findElements(By.className("tagDescriptionModal_tagContainer__qBucT")).length > 0) {
+            const tags = await driver.findElement(By.className("tagDescriptionModal_tag_title__sm16V")).getText();
+            assert.ok(isLanguageMatching(tags, [selectedLangValue]), `Tags (${tags}) not match to ${selectedLangValue}`);
+          }
           const subTitle = await driver.wait(until.elementLocated(By.className("card_name__HOcFA")), timeOut).getText();
           assert.ok(isLanguageMatching(subTitle, [selectedLangValue]), `Title (${subTitle}) not match to ${selectedLang}`);
           const subDescription = await driver
             .wait(until.elementLocated(By.className("card_description__Ax4dg ellipses")), timeOut)
             .getText();
           assert.ok(isLanguageMatching(subDescription, [selectedLangValue]), `Description (${subDescription}) not match to ${selectedLang}`);
+        }
+        break;
+      }
+
+      else if (!isDisplayedDropDown) {
+        const validLanguage = ["en"]
+        const mainTitleNew = await driver
+          .wait(until.elementLocated(By.className("lpbannersection_title__NgQgR")), timeOut)
+          .getText();
+        assert.ok(isLanguageMatching(mainTitleNew, validLanguage), `Title (${mainTitleNew}) not matching to English`);
+        const mainDescriptionNew = await driver
+          .wait(until.elementLocated(By.className("learningpathdetails_description__1Ecmp")), timeOut)
+          .getText();
+        assert.ok(isLanguageMatching(mainDescriptionNew, validLanguage), `Description (${mainDescriptionNew}) not matching to English`);
+        //Check skills tag
+        if (await driver.findElements(By.className("tagDescriptionModal_tagContainer__qBucT")).length > 0) {
+          const tags = await driver.findElement(By.className("tagDescriptionModal_tag_title__sm16V")).getText();
+          assert.ok(isLanguageMatching(tags, [selectedLangValue]), `Tags (${tags}) not match to ${selectedLangValue}`);
+        }
+        //Check sub courses
+        const subList = await driver.findElements(By.className("card_card__dPAc9"));
+        for (let index = 0; index < subList.length; index++) {
+          const subTitleNew = await subList[index].findElement(By.className("card_name__HOcFA")).getText();
+          assert.ok(isLanguageMatching(subTitleNew, validLanguage), `Title (${subTitleNew}) not matching to English`);
+          const subDescriptionNew = await subList[index].findElement(By.className("card_description__Ax4dg ellipses")).getText();
+          assert.ok(isLanguageMatching(subDescriptionNew, validLanguage), `Description (${subDescriptionNew}) not matching to English`);
         }
         break;
       }
@@ -148,6 +178,40 @@ describe("Verify learning path detail", () => {
 
           break;
         }
+        break;
+      }
+
+      else if (!isDisplayedDropDown) {
+        //Start Course
+        const originalWindow = await driver.getWindowHandle();
+        const startCourse = await driver.wait(
+          until.elementLocated(By.className("learningpathdetails_btn_container__rCzyi")),
+          timeOut,
+        );
+        await startCourse.click();
+
+        //Navigate to detail course
+        const windows = await driver.getAllWindowHandles();
+        windows.forEach(async (handle) => {
+          if (handle !== originalWindow) {
+            await driver.switchTo().window(handle);
+          }
+        });
+        await driver.wait(until.titleIs("Adapt"), timeOut);
+        assert.ok((await driver.getTitle()) === "Adapt", "Navigation to detail course failed");
+        const lessonContent = await driver.wait(
+          until.elementLocated(By.className("page__inner")),
+
+          timeOut,
+        );
+        await driver.wait(until.elementIsVisible(lessonContent), timeOut);
+        await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+
+        //Close detail course
+        await driver.close();
+        await driver.switchTo().window(originalWindow);
+        await driver.sleep(7000);
+
         break;
       }
       await driver.wait(until.elementLocated(By.className("button_button_wrapper__XaMM9 button_rounded__7_4oM button_seconday_btn__KmHyZ")), timeOut).click();
