@@ -1,5 +1,7 @@
 import { timeOut } from "./constants.js";
 import { By, until } from "selenium-webdriver";
+import fs from "fs";
+import path from "path";
 const checkIsElementInRect = (rect, windowSize) => {
     return (
         rect.top >= 0 &&
@@ -50,10 +52,18 @@ const checkChildElementExists = async (element, type, className) => {
     }
 };
 
+const handleScreenShot = async (driver, screenshotDir, screenshotFileName) => {
+    const response = await driver.takeScreenshot();
+    fs.mkdirSync(screenshotDir, { recursive: true });
+    const screenshotPath = path.join(screenshotDir, screenshotFileName);
+    fs.writeFileSync(screenshotPath, response, "base64");
+};
+
 export {
     checkIsElementInRect,
     checkIsElementInViewportXAxis,
     checkIsElementInViewport,
     checkElementExists,
     checkChildElementExists,
+    handleScreenShot,
 };
