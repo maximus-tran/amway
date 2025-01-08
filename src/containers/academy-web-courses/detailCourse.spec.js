@@ -164,6 +164,7 @@ describe("KAN-17: Verify UI detailed course", () => {
 
       else if (!isDisplayedDropDown) {
         //Start Course
+        const originalWindow = await driver.getWindowHandle();
         const startCourse = await driver.wait(
           until.elementLocated(By.className("button_btn_text__rvpWC")),
           timeOut,
