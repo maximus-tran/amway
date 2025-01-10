@@ -121,31 +121,40 @@ describe("Academy web_Search_Filter", () => {
   })
 
   it("It should display the search result that matches between the Courses/ Learning Path title, Description, Author/Speaker Name or CST and key words", async () => {
-    const listResult = await driver.findElements(By.className("searchResultCard_card__8KfTe"));
-    const loopCount = listResult.length;
+    const haveResult = await checkElementExists(
+      driver,
+      "className",
+      "searchResultCard_card__8KfTe"
+    );
 
-    for (let item = 0; item < loopCount; item++) {
-      const courseContent = await listResult[item].getText();
-      // Get the value of the search input
-      const searchValue = await driver.wait(until.elementLocated(By.id("autocomplete-input")), timeOut).getAttribute("value");
-      assert.ok(await courseContent.toLowerCase().includes(searchValue.toLowerCase()), `${searchValue} is not match between the Courses/ Learning Path title, Description, Author/Speaker Name or CST and key words`);
+    if (haveResult) {
+      const listResult = await driver.findElements(By.className("searchResultCard_card__8KfTe"));
+      const loopCount = listResult.length;
 
-      await driver.sleep(1000);
-      const screenshotDir = path.join(
-        "auto-testing-report",
-        "screenshots",
-        "academyWebSearchFilter",
-      );
-      await handleScreenShot(
-        driver,
-        screenshotDir,
-        `matchingContent.png`,
-      );
-      addContext(this, {
-        title: `Total Number Of Courses and it should show Learning path pill tab next to Courses pill tab`,
-        value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/matchingContent.png`,
-      });
+      for (let item = 0; item < loopCount; item++) {
+        const courseContent = await listResult[item].getText();
+        // Get the value of the search input
+        const searchValue = await driver.wait(until.elementLocated(By.id("autocomplete-input")), timeOut).getAttribute("value");
+        assert.ok(await courseContent.toLowerCase().includes(searchValue.toLowerCase()), `${searchValue} is not match between the Courses/ Learning Path title, Description, Author/Speaker Name or CST and key words`);
+
+        await driver.sleep(1000);
+        const screenshotDir = path.join(
+          "auto-testing-report",
+          "screenshots",
+          "academyWebSearchFilter",
+        );
+        await handleScreenShot(
+          driver,
+          screenshotDir,
+          `matchingContent.png`,
+        );
+        addContext(this, {
+          title: `Total Number Of Courses and it should show Learning path pill tab next to Courses pill tab`,
+          value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/matchingContent.png`,
+        });
+      }
     }
+
   })
 
   after(async () => await driver.quit());
