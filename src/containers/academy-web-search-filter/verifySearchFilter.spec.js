@@ -156,7 +156,48 @@ describe("Academy web_Search_Filter", () => {
         break;
       }
     }
+  })
 
+  it("It should redirect to the respective Course details screen", async () => {
+    const haveResult = await checkElementExists(
+      driver,
+      "className",
+      "searchResultCard_card__8KfTe"
+    );
+
+    if (haveResult) {
+      const listResult = await driver.findElements(By.className("searchResultCard_card__8KfTe"));
+      const loopCount = listResult.length;
+
+      for (let item = 0; item < loopCount; item++) {
+        await listResult[item].click();
+        // Check course details modal is displayed
+        const isDisplayedCourseDetails = await checkElementExists(
+          driver,
+          "className",
+          "startLaunchCourse_start_launch_course_container__qYr6q"
+        );
+        assert.ok(isDisplayedCourseDetails, "Course details screen is not displayed")
+
+        await driver.wait(until.elementLocated(By.className("startLaunchCourse_section_container__ZsDA4")), timeOut);
+        const screenshotDir = path.join(
+          "auto-testing-report",
+          "screenshots",
+          "academyWebSearchFilter",
+        );
+        await handleScreenShot(
+          driver,
+          screenshotDir,
+          `redirectToCourseDetails.png`,
+        );
+        addContext(this, {
+          title: `Total Number Of Courses and it should show Learning path pill tab next to Courses pill tab`,
+          value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/redirectToCourseDetails.png`,
+        });
+
+        break;
+      }
+    }
   })
 
   it("It should display the search result that matches with Keyword, Category and Required", async () => {
