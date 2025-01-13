@@ -79,7 +79,6 @@ describe("Academy web_Learning Path_Certificate_Favourite", () => {
                     const courseTitleCompleted = await learningPathCompleted[x].getText();
                     await scrollToElement(driver, learningPathCompleted[x]);
                     await driver.sleep(1000);
-                    console.log("/////////////");
                     const screenshotDir = path.join(
                         "auto-testing-report",
                         "screenshots",
@@ -94,10 +93,8 @@ describe("Academy web_Learning Path_Certificate_Favourite", () => {
                         title: `The course ${courseTitle} is not existed in Completed tab`,
                         value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/courseDisplayedAtCompletedTab.png`,
                     });
-                    console.log("----------------");
-                    assert.deepEqual(
-                        courseTitle,
-                        courseTitleCompleted,
+                    assert.ok(
+                        courseTitle === courseTitleCompleted,
                         `The course ${courseTitle} is not existed in Completed tab`,
                     );
                     break;
@@ -118,7 +115,6 @@ describe("Academy web_Learning Path_Certificate_Favourite", () => {
                 for (let y = 0; y < loopCourseFavourite; y++) {
                     const courseTitleFavourite = await learningPathFavourite[y].getText();
                     await driver.sleep(1000);
-                    console.log(";;;;;;;;;;;;;;;;;");
                     await scrollToElement(driver, learningPathFavourite[y]);
                     const screenshotDir = path.join(
                         "auto-testing-report",
@@ -134,10 +130,8 @@ describe("Academy web_Learning Path_Certificate_Favourite", () => {
                         title: `The course ${courseTitle} is not existed in Favourite tab`,
                         value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/courseDisplayedAtFavouriteTab.png`,
                     });
-                    console.log("===================");
-                    assert.deepEqual(
-                        courseTitle,
-                        courseTitleFavourite,
+                    assert.ok(
+                        courseTitle === courseTitleFavourite,
                         `The course ${courseTitle} is not existed in Favourite tab`,
                     );
 

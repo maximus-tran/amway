@@ -18,9 +18,17 @@ const scrollToElement = async (driver, element) => {
     await driver.executeScript("arguments[0].scrollIntoView(true);", element);
 };
 
+const scrollUp = async (driver, element) => {
+    await driver.executeScript("arguments[0].scrollIntoView(false);", element);
+};
+
+const hoverOverElement = async (driver, element) => {
+    await driver.actions().move({ origin: element }).perform();
+};
+
 // const scrollToElement = async (driver, element) => {
 //     await driver.executeScript("window.scrollTo(0, 0);");
 //     await driver.actions().scroll(0, 0, 0, 400, element).perform();
 // };
 
-export { scrollToCss, scrollToXpath, scrollToElement };
+export { scrollToCss, scrollToXpath, scrollToElement, scrollUp, hoverOverElement };
