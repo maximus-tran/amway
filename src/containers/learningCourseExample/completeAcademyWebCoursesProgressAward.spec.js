@@ -124,6 +124,8 @@ describe("Academy web_Courses_Track progress_Award", () => {
                 // await driver.close();
                 await driver.switchTo().window(originalWindow);
                 await driver.sleep(8000);
+                //Back to main page
+                await driver.wait(until.elementLocated(By.className("courseCompletionModal_homeBtn__39f1_")), timeOut).click();
 
                 //Check course should be removed from In Progress tab
                 await driver.wait(until.elementLocated(By.id("tab-in_progress")), timeOut).click();
