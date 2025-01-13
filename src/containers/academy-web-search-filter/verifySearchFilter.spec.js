@@ -5,7 +5,7 @@ import assert from "assert";
 import { checkElementExists, handleScreenShot } from "../../common/checkViewport.js";
 import path from "path";
 import addContext from "mochawesome/addContext.js";
-import { hoverOverElement } from "../../common/scrollTo.js";
+import { hoverOverElement, scrollUp } from "../../common/scrollTo.js";
 
 describe("Academy web_Search_Filter", () => {
   let driver;
@@ -44,7 +44,7 @@ describe("Academy web_Search_Filter", () => {
 
   it("Redirect to the Search: View & Filter Result screen with the entered search terms activated", async () => {
     // Entered search terms
-    await driver.wait(until.elementLocated(By.id("autocomplete-input")), timeOut).sendKeys("award");
+    await driver.wait(until.elementLocated(By.id("autocomplete-input")), timeOut).sendKeys("Test");
 
     // Press ENTER
     await driver.sleep(1000)
@@ -152,9 +152,121 @@ describe("Academy web_Search_Filter", () => {
           title: `Total Number Of Courses and it should show Learning path pill tab next to Courses pill tab`,
           value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/matchingContent.png`,
         });
+
+        break;
       }
     }
 
+  })
+
+  it("It should display the search result that matches with Keyword, Category and Required", async () => {
+    const filter = await driver.findElements(By.className("searchPage_title__Gaa9a"));
+    for (let i = 0; i < filter.length; i++) {
+      const filterContent = await filter[i].getText();
+      const langArr = [
+        { label: "Categorie" },
+        { label: "Categories" },
+        { label: "分类" },
+      ];
+      const requirement = [
+        { label: "Obbligatorio" },
+        { label: "Requirement" },
+        { label: "要求" }
+      ];
+      const categoriesValue = langArr.find((x) => x.label === filterContent);
+      const requirementValue = requirement.find((x) => x.label === filterContent);
+
+      if (categoriesValue) {
+        await filter[i].click();
+        // Click checkbox
+        const checkbox = await driver.findElements(By.className("checkbox_checkbox__ZRtMk"))
+        for (let x = 0; x < checkbox.length; x++) {
+          await checkbox[5].click();
+          break;
+        }
+      }
+
+      if (requirementValue) {
+        await filter[i].click();
+        // Click checkbox recommended
+        await driver.wait(until.elementLocated(By.xpath("//input[@id='recommended']")), timeOut).click();
+
+        const haveResult = await checkElementExists(
+          driver,
+          "className",
+          "searchResultCard_card__8KfTe"
+        );
+        if (haveResult) {
+          const listResult = await driver.findElements(By.className("searchResultCard_card__8KfTe"));
+          const loopCount = listResult.length;
+
+          for (let item = 0; item < loopCount; item++) {
+            // Check requirement tags is displayed
+            const isDisplayedTags = await checkElementExists(
+              driver,
+              "className",
+              "pill_pill_wrapper__gIDX_ pill_trending__9eWU6"
+            )
+            assert.ok(isDisplayedTags, "Tags is not displayed")
+
+            await scrollUp(driver, await driver.findElement(By.className("tab_wrapper__DEA_E")));
+            await driver.sleep(1000);
+            const screenshotDir = path.join(
+              "auto-testing-report",
+              "screenshots",
+              "academyWebSearchFilter",
+            );
+            await handleScreenShot(
+              driver,
+              screenshotDir,
+              `checkResultAfterClickCheckbox.png`,
+            );
+            addContext(this, {
+              title: `The search result not matches with Keyword, Category and Required`,
+              value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/checkResultAfterClickCheckbox.png`,
+            });
+
+            break;
+          }
+        }
+        break;
+      }
+
+    }
+  })
+
+  it("All filters below of 'Filter by:' at left panel should be cleared", async () => {
+    const isDisplayedFilterContent = await checkElementExists(
+      driver,
+      "className",
+      "searchPage_filtersList__6tM_y"
+    )
+    assert.ok(isDisplayedFilterContent, "There is no content in filter");
+    const isDisplayedClearButton = await checkElementExists(
+      driver,
+      "className",
+      "searchPage_lbl__KlUL8 searchPage_clearAll__2limU"
+    );
+    assert.ok(isDisplayedClearButton, "Clear All button is not displayed");
+    if (isDisplayedClearButton) {
+      await driver.wait(until.elementLocated(By.className("searchPage_lbl__KlUL8 searchPage_clearAll__2limU")), timeOut).click();
+
+      await driver.sleep(1000);
+      const screenshotDir = path.join(
+        "auto-testing-report",
+        "screenshots",
+        "academyWebSearchFilter",
+      );
+      await handleScreenShot(
+        driver,
+        screenshotDir,
+        `clearFilter.png`,
+      );
+      addContext(this, {
+        title: `The search result not matches with Keyword, Category and Required`,
+        value: `./${screenshotDir.replace("auto-testing-report", "").replace(/\\/g, "/")}/clearFilter.png`,
+      });
+    }
   })
 
   after(async () => await driver.quit());

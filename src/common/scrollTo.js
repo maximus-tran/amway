@@ -18,6 +18,10 @@ const scrollToElement = async (driver, element) => {
     await driver.executeScript("arguments[0].scrollIntoView(true);", element);
 };
 
+const scrollUp = async (driver, element) => {
+    await driver.executeScript("arguments[0].scrollIntoView(false);", element);
+};
+
 const hoverOverElement = async (driver, element) => {
     await driver.actions().move({ origin: element }).perform();
 };
@@ -27,4 +31,4 @@ const hoverOverElement = async (driver, element) => {
 //     await driver.actions().scroll(0, 0, 0, 400, element).perform();
 // };
 
-export { scrollToCss, scrollToXpath, scrollToElement, hoverOverElement };
+export { scrollToCss, scrollToXpath, scrollToElement, scrollUp, hoverOverElement };
