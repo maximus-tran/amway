@@ -7,9 +7,15 @@ import { isLanguageMatching } from "../../common/detectLanguage.js";
 import path from "path";
 import addContext from "mochawesome/addContext.js";
 
-const user = {
+const userA = {
   email: "MPKF34IMTEJSU4SQJ6UCOC6FFZ4COPJOYWSEIIVMZXLKIWEU2BAQ@example.com",
   username: "GENE FLUECK",
+  password: "Amway@1234",
+};
+
+const userB = {
+  email: "QXAO7524YOMZWRMTRPDWYN7OQYOJQB3OADFHE4PLAZFVXTXJXBRQ@example.com",
+  username: "RENDA KIENITZ",
   password: "Amway@1234",
 };
 
@@ -25,8 +31,8 @@ describe("Academy web_Share_WithAccess", () => {
     // Login
     await driver
       .wait(until.elementLocated(By.id("loginform:loginid")), timeOut)
-      .sendKeys(user.email);
-    await driver.findElement(By.id("loginform:password")).sendKeys(user.password);
+      .sendKeys(userA.email);
+    await driver.findElement(By.id("loginform:password")).sendKeys(userA.password);
     await driver.findElement(By.id("loginform:loginButton")).click();
 
     const isDisplayedProfileIcon = await checkElementExists(
@@ -162,15 +168,44 @@ describe("Academy web_Share_WithAccess", () => {
       await driver.wait(until.elementLocated(By.className("courseDurationModal_shareIcon__w6Mxt")), timeOut).click();
 
       // Open link 
-      await driver.executeScript(`
+      const urlLinkCopied = await driver.executeScript(`
         return navigator.clipboard.readText();
       `);
 
       // Close pop up copying the link successfully
       await driver.wait(until.elementIsVisible(driver.findElement(By.className("toast_closeButton__Rz4sT"))), timeOut).click();
 
-      // Close course details drawer
-      await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+      if (urlLinkCopied) {
+        // Open new tab with link copied
+        await driver.switchTo().newWindow("tab");
+        await driver.get(urlLinkCopied);
+        // Close course details drawer
+        await driver.wait(until.elementLocated(By.className("icon startLaunchCourse_cross_icon__eyRob")), timeOut).click();
+        // Log out
+        await driver
+          .wait(until.elementLocated(By.className("profileIcon_container__Pd3Ql")), timeOut)
+          .click();
+        const originalWindow = await driver.getWindowHandle();
+        await driver.wait(until.elementLocated(By.css(".CourseHeader_content_child__LUX1f:nth-child(3)")), timeOut).click();
+        const windows = await driver.getAllWindowHandles();
+        windows.forEach(async (handle) => {
+          if (handle !== originalWindow) {
+            await driver.switchTo().window(handle);
+          }
+        });
+        await driver.sleep(2000);
+        // Navigate to login page
+        await driver.navigate().to(`${baseURL}/login?country=it`);
+        // Login
+        await driver
+          .wait(until.elementLocated(By.id("loginform:loginid")), timeOut)
+          .sendKeys(userB.email);
+        await driver.findElement(By.id("loginform:password")).sendKeys(userB.password);
+        await driver.findElement(By.id("loginform:loginButton")).click();
+        // Navigate to the course shared by user A
+        await driver.navigate().to(urlLinkCopied);
+      }
+
       break;
     }
   })
